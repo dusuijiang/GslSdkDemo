@@ -27,6 +27,9 @@ public class UrlBuilder {
 
     }
 
+    public String getReqUrl(){
+        return mUrlConfig.getHttpUrl();
+    }
     public String getInitReqUrl(){
         return mUrlConfig.getHttpUrl()+"/app/init";
     }

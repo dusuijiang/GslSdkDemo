@@ -2,6 +2,7 @@ package com.gls.speed.sdkdemo;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.SizeF;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //init();
         initView();
         btn0.setOnClickListener(this);
         btn1.setOnClickListener(this);
@@ -68,17 +70,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tv6 = findViewById(R.id.tv6);
     }
 
+    private void init(){
+        GslAccelerate.getInstance().glsAccelerateInit(this, "YUNVA", "18902478051", "fybsignyunva1234",false);
+    }
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn0:
-                GslAccelerate.getInstance().glsAccelerateInit(this, "TEST", "dusuijiang001", "fybsigntest12345");
+                GslAccelerate.getInstance().glsAccelerateInit(this, "YUNVA", "18902478051", "fybsignyunva1234",false);
+                tv0.setText( "  " + StorageManage.getInstance().getIP());
+
                 break;
             case R.id.btn1:
                 GslAccelerate.getInstance().qualificationsCheckService(new RequestCallback<GslCheckResp>() {
                     @Override
                     public void onResult(final GslCheckResp result) {
-                        StorageManage.getInstance().setKeyProductCode(result.getProductList().get(0).getProductCode());
+                       // StorageManage.getInstance().setKeyProductCode(result.getProductList().get(0).getProductCode());
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -98,12 +105,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 long s0 = new Random().nextLong();
                 long s1 = new Random().nextLong();
 
-                GslAccelerate.getInstance().synOrderAccelerateServicec(StorageManage.getInstance().getKeyProductCode(), s0 + "010111" + s1, new RequestCallback<GslOrderResp>() {
+                GslAccelerate.getInstance().synOrderAccelerateServicec("FYBKD0101", s0 + "010111" + s1, new RequestCallback<GslOrderResp>() {
                     @Override
                     public void onResult(final GslOrderResp result) {
 
                         if (result.getResCode() == 10000L) {
                             StorageManage.getInstance().setOrdid(result.getOrderId());
+                            StorageManage.getInstance().setClassName(result.getClassName());
                         }
 
                         runOnUiThread(new Runnable() {
@@ -123,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 });
                 break;
             case R.id.btn3:
-                GslAccelerate.getInstance().orderQueryService(StorageManage.getInstance().getOrdid(), new RequestCallback<GslOrderQueryResp>() {
+                GslAccelerate.getInstance().orderQueryService(StorageManage.getInstance().getClassName(),StorageManage.getInstance().getOrdid(), new RequestCallback<GslOrderQueryResp>() {
                     @Override
                     public void onResult(final GslOrderQueryResp result) {
                         runOnUiThread(new Runnable() {
@@ -142,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 });
                 break;
             case R.id.btn4:
-                GslAccelerate.getInstance().startUpAccelerateService(StorageManage.getInstance().getOrdid(), new RequestCallback<GslStartupResp>() {
+                GslAccelerate.getInstance().startUpAccelerateService(StorageManage.getInstance().getClassName(),StorageManage.getInstance().getOrdid(), new RequestCallback<GslStartupResp>() {
                     @Override
                     public void onResult(final GslStartupResp result) {
 
@@ -164,7 +172,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 });
                 break;
             case R.id.btn5:
-                GslAccelerate.getInstance().stopAccelerateService(StorageManage.getInstance().getResCDRID(), new RequestCallback<GslStopResp>() {
+                GslAccelerate.getInstance().stopAccelerateService(StorageManage.getInstance().getClassName(),StorageManage.getInstance().getResCDRID(), new RequestCallback<GslStopResp>() {
                     @Override
                     public void onResult(final GslStopResp result) {
                         runOnUiThread(new Runnable() {
@@ -183,7 +191,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 });
                 break;
             case R.id.btn6:
-                GslAccelerate.getInstance().stateQueryService(new RequestCallback<GslStateQueryResp>() {
+                GslAccelerate.getInstance().stateQueryService(StorageManage.getInstance().getClassName(),new RequestCallback<GslStateQueryResp>() {
                     @Override
                     public void onResult(final GslStateQueryResp result) {
                         runOnUiThread(new Runnable() {

@@ -16,11 +16,13 @@ public class StorageManage {
     private String partner_code;
     private String user_account;
     private String key;
+    private String appid;
     private static final String KEY_CLASS_NAME = "classname";
     private static final String KEY_PRODUCT_CODE = "product_code";
     private static final String KEY_RESCDRID = "rescdrid";
     private static final String KEY_ORDID = "ordid";
     private static final String KEY_URL = "url";
+    private static final String KEY_APPID = "appid";
     public static StorageManage getInstance() {
         if (instance == null) {
             synchronized (StorageManage.class) {
@@ -35,7 +37,8 @@ public class StorageManage {
     private StorageManage() {
     }
 
-    public void init(Context context,String partner_code, String user_account, String key) {
+    public void init(String appid ,Context context,String partner_code, String user_account, String key) {
+        this.appid = appid;
         this.mContext = context;
         this.partner_code = partner_code;
         this.user_account = user_account;
@@ -54,6 +57,10 @@ public class StorageManage {
         return user_account;
     }
 
+    public String getAppid() {
+        return appid;
+    }
+
     public String getKey() {
         return key;
     }
@@ -63,7 +70,12 @@ public class StorageManage {
             SharedPreferencesUtil.putStringValue(mContext, KEY_SOURCE_IP, ip);
         }
     }
-
+    public String getIP() {
+        if (mContext != null) {
+            return SharedPreferencesUtil.getStringValue(mContext, KEY_SOURCE_IP, "");
+        }
+        return "";
+    }
     public void setClassName(String className){
         if (mContext != null){
             SharedPreferencesUtil.putStringValue(mContext, KEY_CLASS_NAME, className);
@@ -77,12 +89,19 @@ public class StorageManage {
         return "";
     }
 
-    public String getIP() {
+    public void setKeyAppid(String appid){
+        if (mContext != null){
+            SharedPreferencesUtil.putStringValue(mContext, KEY_APPID, appid);
+        }
+    }
+
+    public String getKeyAppid(){
         if (mContext != null) {
-            return SharedPreferencesUtil.getStringValue(mContext, KEY_SOURCE_IP, "");
+            return SharedPreferencesUtil.getStringValue(mContext, KEY_APPID, "");
         }
         return "";
     }
+
 
     public void setKeyProductCode(String product_code){
         if (mContext != null){

@@ -24,13 +24,12 @@ public class GslAccelerate {
 
     private String partner_code;
     private String user_account;
-    private String key;
+    private String parentKey;
     private Context context;
     private GslAccelerateServer gslAccelerateServer;
     private GslAccelerate() {
         UrlBuilder.getInstance().init(new ProductUrlConfig());
         gslAccelerateServer = new GslAccelerateServer();
-        gslAccelerateServer.getIp();
     }
 
     private static class SingletonHolder {
@@ -47,26 +46,18 @@ public class GslAccelerate {
      * @param context  上下文
      * @param partner_code  渠道编码
      * @param user_account 用户账号
-     * @param key 平台分配的key
+     * @param parentKey 平台分配的parentKey
+     * @param open 日志开关
      */
-    public void glsAccelerateInit(Context context,String partner_code, String user_account, String key) {
+    public void glsAccelerateInit(Context context,String partner_code, String user_account, String parentKey,boolean open) {
         this.partner_code = partner_code;
         this.user_account = user_account;
-        this.key = key;
+        this.parentKey = parentKey;
         this.context = context;
-        StorageManage.getInstance().init(context,partner_code,user_account,key);
-        //gslAccelerateServer.startVoiceP(context,key);
-        gslAccelerateServer.uploadDeviceInfo(new RequestCallback() {
-            @Override
-            public void onResult(Object result) {
-                MLog.d("TAG" + result);
-            }
+        MLog.setLogEnable(open);
+        StorageManage.getInstance().init("100094",context,partner_code,user_account,parentKey);
+        gslAccelerateServer.startVoiceP(context,"100094");
 
-            @Override
-            public void onError(Exception e) {
-
-            }
-        });
     }
 
     /**
@@ -102,8 +93,8 @@ public class GslAccelerate {
      * @param orderId  订单编号
      * @param callback 接收回调的数据
      */
-    public void orderQueryService(String orderId, RequestCallback<GslOrderQueryResp> callback) {
-        gslAccelerateServer.orderQueryService(orderId,callback);
+    public void orderQueryService(String className,String orderId, RequestCallback<GslOrderQueryResp> callback) {
+        gslAccelerateServer.orderQueryService(className,orderId,callback);
     }
 
     /**
@@ -111,8 +102,8 @@ public class GslAccelerate {
      * @param orderId  订单编号
      * @param callback 接收回调的数据
      */
-    public void startUpAccelerateService(String orderId, RequestCallback<GslStartupResp> callback) {
-        gslAccelerateServer.startUpAccelerateService(orderId,callback);
+    public void startUpAccelerateService(String className,String orderId, RequestCallback<GslStartupResp> callback) {
+        gslAccelerateServer.startUpAccelerateService(className,orderId,callback);
     }
 
     /**
@@ -120,16 +111,16 @@ public class GslAccelerate {
      * @param cdrid 加速成功返回的流水号
      * @param callback 接收回调的数据
      */
-    public void stopAccelerateService(String cdrid, RequestCallback<GslStopResp> callback) {
-        gslAccelerateServer.stopAccelerateService(cdrid,callback);
+    public void stopAccelerateService(String className,String cdrid, RequestCallback<GslStopResp> callback) {
+        gslAccelerateServer.stopAccelerateService(className,cdrid,callback);
     }
 
     /**
      * 宽带加速状态查询
      * @param callback 接收回调的数据
      */
-    public void stateQueryService(RequestCallback<GslStateQueryResp> callback) {
-        gslAccelerateServer.stateQueryService(callback);
+    public void stateQueryService(String className,RequestCallback<GslStateQueryResp> callback) {
+        gslAccelerateServer.stateQueryService(className,callback);
     }
 
 }

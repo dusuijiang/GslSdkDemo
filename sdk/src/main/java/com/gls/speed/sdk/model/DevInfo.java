@@ -1,5 +1,6 @@
 package com.gls.speed.sdk.model;
 
+
 /**
  * @Author:GLR
  * @Date:Created in 2017/11/29 10:16.
@@ -12,10 +13,13 @@ public class DevInfo {
     private String imei;
     private int osType;//系统类型 1 Android 2 ios 3 web 4 pc
     private String osVersion;//系统版本号
-    private String appVersion;//当前sdk版本号
+    private String appVersion;//当前版本号
+    private String sdkVersion;//当前sdk版本号
+
     private String brand;//手机厂商
     private String model;//机型
     private String networkType;// 1 WIFI, 2 4G, 3 3G, 4 2G
+   // @JsonProperty
     private String SSID;//wifi标识
     private String signalStrength;//信号强度 数字+单位
     private String androidId;
@@ -30,6 +34,9 @@ public class DevInfo {
 
     //以下字段不用传
     private String ip;
+
+    public String getSdkVersion(){return sdkVersion;}
+    public void setSdkVersion(String sdkVersion){this.sdkVersion=sdkVersion; }
 
     public String getSSID() {
         return SSID;

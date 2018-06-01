@@ -4,6 +4,8 @@ import android.os.Handler;
 import android.os.Looper;
 
 
+import com.gls.speed.sdk.config.ProductUrlConfig;
+import com.gls.speed.sdk.config.UrlBuilder;
 import com.gls.speed.sdk.impl.RequestCallback;
 import com.gls.speed.sdk.storage.StorageManage;
 import com.gls.speed.sdk.utils.MLog;
@@ -19,6 +21,8 @@ import java.net.URL;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+import javax.net.ssl.HttpsURLConnection;
+
 /**
  * Created by dengjun on 2017/10/31.
  */
@@ -27,7 +31,7 @@ public class PrimaryHttpClient {
     private Executor mExecutor;
     private Handler mHandler;
 
-    private int mTimeOut = 10*1000;
+    private int mTimeOut = 10 * 1000;
 
     public PrimaryHttpClient() {
         initExecutor();
@@ -42,14 +46,14 @@ public class PrimaryHttpClient {
         this.mHandler = handler;
     }
 
-    private void initExecutor(){
-        if (mExecutor ==  null){
+    private void initExecutor() {
+        if (mExecutor == null) {
             mExecutor = Executors.newScheduledThreadPool(5);
         }
     }
 
-    public void initHandler(){
-        if (mHandler == null){
+    public void initHandler() {
+        if (mHandler == null) {
             mHandler = new Handler(Looper.getMainLooper());
         }
     }
@@ -60,68 +64,68 @@ public class PrimaryHttpClient {
 
 
     public void setTimeOut(int timeOut) {
-        if (timeOut > 1*1000 && timeOut < 60*1000){
+        if (timeOut > 1 * 1000 && timeOut < 60 * 1000) {
             this.mTimeOut = timeOut;
         }
     }
 
-    private void callbackResult(final String result, final RequestCallback<String> callback){
-        if (callback != null){
-            if (mHandler != null){
+    private void callbackResult(final String result, final RequestCallback<String> callback) {
+        if (callback != null) {
+            if (mHandler != null) {
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {
                         callback.onResult(result);
                     }
                 });
-            }else{
+            } else {
                 callback.onResult(result);
             }
         }
     }
 
-    private void callbackException(final Exception error, final RequestCallback<String> callback){
-        if (callback != null){
-            if (mHandler != null){
+    private void callbackException(final Exception error, final RequestCallback<String> callback) {
+        if (callback != null) {
+            if (mHandler != null) {
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {
                         callback.onError(error);
                     }
                 });
-            }else{
+            } else {
                 callback.onError(error);
             }
         }
     }
 
-    public void requestAsync(String url,RequestCallback<String> callback){
-        requestAsync(url,null,callback);
+    public void requestAsync(String url, RequestCallback<String> callback) {
+        requestAsync(url, null, callback);
     }
 
-    public void requestAsync(final String url, final String body, final RequestCallback<String> callback){
+    public void requestAsync(final String url, final String body, final RequestCallback<String> callback) {
         initExecutor();
         mExecutor.execute(new Runnable() {
             @Override
             public void run() {
-                requestSync(url,body,callback);
+                requestSync(url, body, callback);
             }
         });
     }
 
-    private void requestSync(String url,String body,RequestCallback<String> callback){
-        MLog.i("url",url + " "+body);
+    private void requestSync(String url, String body, RequestCallback<String> callback) {
+        MLog.i("url", url + " " + body);
         HttpURLConnection connection = null;
         BufferedReader reader = null;
         StringBuilder sb = new StringBuilder();
         try {
-            URL requestUrl  = new URL(url);
-            connection = (HttpURLConnection)requestUrl.openConnection();
+            URL requestUrl = new URL(url);
+            connection = (HttpURLConnection) requestUrl.openConnection();
 
             connection.setConnectTimeout(mTimeOut);
             connection.setReadTimeout(mTimeOut);
 
-            if (body != null){
+            if (body != null) {
                 connection.setRequestMethod("POST");
 
                 //发送post请求必须设置
@@ -136,7 +140,7 @@ public class PrimaryHttpClient {
                 out.writeBytes(body);//写入请求参数
                 out.flush();
                 out.close();
-            }else {
+            } else {
                 connection.setRequestMethod("GET");
             }
 
@@ -152,21 +156,21 @@ public class PrimaryHttpClient {
 
                 String result = sb.toString();
 
-                if (result != null && !"".equals(result)){
-                    callbackResult(result,callback);
-                }else {
+                if (result != null && !"".equals(result)) {
+                    callbackResult(result, callback);
+                } else {
                     callbackException(new Exception("Received nothing"), callback);
                 }
-            }else {
+            } else {
                 callbackException(new Exception("Request ResponseCode != 200"), callback);
             }
         } catch (MalformedURLException e) {
             e.printStackTrace();
-            callbackException(e,callback);
-        }catch (IOException e){
+            callbackException(e, callback);
+        } catch (IOException e) {
             e.printStackTrace();
-            callbackException(e,callback);
-        }finally {
+            callbackException(e, callback);
+        } finally {
             if (reader != null) {
                 try {
                     reader.close();
@@ -180,24 +184,24 @@ public class PrimaryHttpClient {
         }
     }
 
-    public String requestSync(String url) throws Exception{
-        return requestSync(url,null);
+    public String requestSync(String url) throws Exception {
+        return requestSync(url, null);
     }
 
-    public String requestSync(String url,String body) throws Exception{
-        MLog.i("url",url + " "+body);
+    public String requestSync(String url, String body) throws Exception {
+        if (!url.contains(UrlBuilder.getInstance().getReqUrl()))
+            MLog.i("url", url + " " + body);
         StorageManage.getInstance().setUrl(url + body);
         HttpURLConnection connection = null;
         BufferedReader reader = null;
         StringBuilder sb = new StringBuilder();
         try {
-            URL requestUrl  = new URL(url);
-            connection = (HttpURLConnection)requestUrl.openConnection();
-
+            URL requestUrl = new URL(url);
+            connection = (HttpURLConnection) requestUrl.openConnection();
             connection.setConnectTimeout(mTimeOut);
             connection.setReadTimeout(mTimeOut);
 
-            if (body != null){
+            if (body != null) {
                 connection.setRequestMethod("POST");
 
                 //发送post请求必须设置
@@ -206,13 +210,12 @@ public class PrimaryHttpClient {
                 connection.setUseCaches(false);
                 connection.setInstanceFollowRedirects(true);
                 connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-
                 DataOutputStream out = new DataOutputStream(connection
                         .getOutputStream());
                 out.writeBytes(body);//写入请求参数
                 out.flush();
                 out.close();
-            }else {
+            } else {
                 connection.setRequestMethod("GET");
             }
 
@@ -227,22 +230,22 @@ public class PrimaryHttpClient {
                 }
 
                 String result = sb.toString();
-                MLog.d("TAG",result);
-                if (result != null && !"".equals(result)){
+                MLog.d("result : ", result);
+                if (result != null && !"".equals(result)) {
                     return result;
-                }else {
+                } else {
                     throw (new Exception("Received nothing"));
                 }
-            }else {
+            } else {
                 throw (new Exception("Request ResponseCode != 200"));
             }
         } catch (MalformedURLException e) {
             e.printStackTrace();
             throw e;
-        }catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
             throw e;
-        }finally {
+        } finally {
             if (reader != null) {
                 try {
                     reader.close();

@@ -4,7 +4,7 @@ import android.util.Log;
 
 public final class MLog {
 
-    public static boolean enable =true;
+    public static boolean enable =false;
     public static int sLevel = 5;
     public static String Tag = "SpeedUp";
 

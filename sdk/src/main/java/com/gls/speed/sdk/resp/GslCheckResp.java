@@ -1,14 +1,13 @@
 package com.gls.speed.sdk.resp;
 
 
-import java.util.List;
 
 /**
  * 资格审查
  */
 public class GslCheckResp extends BaseResp {
 
-    private List<ProductListBean> ProductList; //可购买产品信息
+   /* private List<ProductListBean> ProductList; //可购买产品信息
     public List<ProductListBean> getProductList() {
         return ProductList;
     }
@@ -83,5 +82,5 @@ public class GslCheckResp extends BaseResp {
                     ", productName='" + productName + '\'' +
                     '}';
         }
-    }
+    }*/
 }

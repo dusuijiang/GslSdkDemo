@@ -11,6 +11,7 @@ public class GslOrderResp extends BaseResp {
     @SerializedName("end_time")
     private String endTime; //订单到期时间
 
+    private String className;
     public String getOrderId() {
         return orderId;
     }
@@ -27,10 +28,19 @@ public class GslOrderResp extends BaseResp {
         this.endTime = endTime;
     }
 
+    public String getClassName() {
+        return className;
+    }
+
+    public void setClassName(String className) {
+        this.className = className;
+    }
+
     @Override
     public String toString() {
         return "GslOrderResp{" +
                 super.toString()+
+                ", className='" + className + '\'' +
                 ", orderId='" + orderId + '\'' +
                 ", endTime='" + endTime + '\'' +
                 '}';

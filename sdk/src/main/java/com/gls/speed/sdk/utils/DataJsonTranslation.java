@@ -199,5 +199,10 @@ public class DataJsonTranslation {
         return map;
     }
 
+    public static String mapToJson(Map map){
+        Gson gson = new Gson();
+        String str = gson.toJson(map);
+        return str.toString();
+    }
 
 }

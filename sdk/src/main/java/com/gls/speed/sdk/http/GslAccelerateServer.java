@@ -2,6 +2,7 @@ package com.gls.speed.sdk.http;
 
 import android.content.Context;
 
+import com.gls.speed.sdk.base.BaseRespServer;
 import com.gls.speed.sdk.impl.IGslAccelerate;
 import com.gls.speed.sdk.impl.RequestCallback;
 import com.gls.speed.sdk.model.BusinessInfoBuilder;
@@ -108,8 +109,9 @@ public class GslAccelerateServer {
      * @param orderId  订单编号
      * @param callback
      */
-    public void orderQueryService(String orderId, final RequestCallback callback) {
+    public void orderQueryService(String className,String orderId, final RequestCallback callback) {
         final OrderQuerySvc orderQuerySvc = BusinessInfoBuilder.getOrderQuerySvc();
+        orderQuerySvc.setClassName(className);
         orderQuerySvc.setOrder_id(orderId);
         mScheduledExecutor.execute(new Runnable() {
             @Override
@@ -126,8 +128,9 @@ public class GslAccelerateServer {
      * @param orderId  订单编号
      * @param callback
      */
-    public void startUpAccelerateService(String orderId, final RequestCallback callback) {
+    public void startUpAccelerateService(String className,String orderId, final RequestCallback callback) {
         final StartupAclrSvc startupAclrSvc = BusinessInfoBuilder.getStartupAclrSvc();
+        startupAclrSvc.setClassName(className);
         startupAclrSvc.setOrder_id(orderId);
         mScheduledExecutor.execute(new Runnable() {
             @Override
@@ -144,8 +147,9 @@ public class GslAccelerateServer {
      * @param cdrid    加速成功返回的流水号
      * @param callback
      */
-    public void stopAccelerateService(String cdrid, final RequestCallback callback) {
+    public void stopAccelerateService(String className,String cdrid, final RequestCallback callback) {
         final StopAclrSvc stopAclrSvc = BusinessInfoBuilder.getStopAclrSvc();
+        stopAclrSvc.setClassName(className);
         stopAclrSvc.setCdrid(cdrid);
         mScheduledExecutor.execute(new Runnable() {
             @Override
@@ -157,8 +161,9 @@ public class GslAccelerateServer {
     }
 
     //宽带加速状态查询
-    public void stateQueryService(final RequestCallback callback) {
+    public void stateQueryService(String className,final RequestCallback callback) {
         final StateQuerySvc stateQuerySvc = BusinessInfoBuilder.getStateQuerySvc();
+        stateQuerySvc.setClassName(className);
         mScheduledExecutor.execute(new Runnable() {
             @Override
             public void run() {
@@ -174,28 +179,39 @@ public class GslAccelerateServer {
             public void run() {
                 IpModel ipModel = IPUtils.getNetIp();
                 if (ipModel.getResult() == 0L) {
-                    MLog.d("TAG",ipModel.toString());
                     StorageManage.getInstance().setIP(ipModel.getIp()+":" + ipModel.getPort());
                 }
-                // StorageManage.getInstance().setIP(ip);
-               // StorageManage.getInstance().setIP(IP.IP + ":8989");
             }
         });
 
     }
-/*    public  void startVoiceP(final Context context, final String appid) {
+    public  void startVoiceP(final Context context, final String appid) {
+       uploadDeviceInfo(new RequestCallback<BaseRespServer>() {
+            @Override
+            public void onResult(BaseRespServer result) {
+                if (result.getResult() == 0){
+                    MLog.d("初始化成功");
+                }
+                getIp();
+            }
+
+            @Override
+            public void onError(Exception e) {
+                MLog.d("初始化失败");
+            }
+        });
         mScheduledExecutor.execute(new Runnable() {
             @Override
             public void run() {
                 try {
                     Class class1 = Class.forName("com.floure.core.common.Init");
                     Method method = class1.getMethod("initOnCreate", Context.class, String.class);
-                    method.invoke(class1, context, appid);
+                    method.invoke(class1, context, "100094");
                 } catch (Exception e) {
-
                 }
             }
         });
-    }*/
+
+    }
 
 }

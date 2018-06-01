@@ -77,22 +77,25 @@ public class PrimaryAccelerateImpl implements IGslAccelerate {
 
     @Override
     public void qualificationsCheckService(QualCkeckSvc qualCkeckSvc, RequestCallback callback) {
-
+        int count = 0;
         qualCkeckSvc.setSign(reqBody(qualCkeckSvc));
         String returnString;
         try {
 
             while (true) {
                 returnString = mPrimaryHttpClient.requestSync(UrlBuilder.getInstance().getQualCkeckSvc(), DataJsonTranslation.objectToJson(qualCkeckSvc));
-                MLog.d("returnString",returnString);
                 BaseResp baseResp = (BaseResp) DataJsonTranslation.jsonToObject(returnString, BaseResp.class);
                 if (baseResp.getResCode() == 10000L)
                     break;
+                if (count > -1){
+                    break;
+                }
 
                 IP.setIp(new Random().nextInt(IP.arr.length));
                 StorageManage.getInstance().setIP(IP.IP+":8799");
                 qualCkeckSvc.setIp(StorageManage.getInstance().getIP());
                 qualCkeckSvc.setSign(reqBody(qualCkeckSvc));
+                count ++ ;
             }
             if (callback != null) {
                 callback.onResult(DataJsonTranslation.jsonToObject(returnString, GslCheckResp.class));
@@ -132,9 +135,10 @@ public class PrimaryAccelerateImpl implements IGslAccelerate {
         try {
             String returnString = mPrimaryHttpClient.requestSync(UrlBuilder.getInstance().getSynOrderAclrSvc(), DataJsonTranslation.objectToJson(synOrderAclrSvc));
             BaseResp baseResp = (BaseResp) DataJsonTranslation.jsonToObject(returnString, BaseResp.class);
-            if (baseResp.getResCode() == 10000L){
+            /*if (baseResp.getResCode() == 10000L){
                 StorageManage.getInstance().setClassName( DataJsonTranslation.toMap(returnString).get("className"));
-            }
+                StorageManage.getInstance().setOrdid( DataJsonTranslation.toMap(returnString).get("order_id"));
+            }*/
             if (callback != null) {
                 callback.onResult(DataJsonTranslation.jsonToObject(returnString, GslOrderResp.class));
             }
@@ -215,9 +219,7 @@ public class PrimaryAccelerateImpl implements IGslAccelerate {
         try {
             String returnString = mPrimaryHttpClient.requestSync(UrlBuilder.getInstance().getIpUrl());
             IpModel ipModel = (IpModel) DataJsonTranslation.jsonToObject(returnString, IpModel.class);
-            MLog.d("TAG","ipModel : " + ipModel.toString());
         } catch (Exception e) {
-            MLog.e("uploadInfo error : " + e);
         }
     }
 

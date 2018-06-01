@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.gls.speed.sdk.config.UrlBuilder;
 import com.gls.speed.sdk.model.IpModel;
+import com.gls.speed.sdk.storage.StorageManage;
 import com.third.google.gson.Gson;
 
 import java.io.BufferedReader;
@@ -37,6 +38,7 @@ public class IPUtils {
         HttpURLConnection httpConnection = null;
         try {
             infoUrl = new URL(UrlBuilder.getInstance().getIpUrl());
+            StorageManage.getInstance().setUrl(UrlBuilder.getInstance().getIpUrl());
             URLConnection connection = infoUrl.openConnection();
             httpConnection = (HttpURLConnection) connection;
             int responseCode = httpConnection.getResponseCode();

@@ -2,6 +2,7 @@ package com.gls.speed.sdk.model;
 
 import android.content.Context;
 
+import com.gls.speed.sdk.config.ProductUrlConfig;
 import com.gls.speed.sdk.storage.StorageManage;
 import com.gls.speed.sdk.utils.DensityUtil;
 import com.gls.speed.sdk.utils.NetworkUtil;
@@ -15,6 +16,7 @@ import com.gls.speed.sdk.utils.UUIDGenerator;
 public class BusinessInfoBuilder {
     public static DevInfo builderDevInfoReq(Context context){
         DevInfo devInfo = new DevInfo();
+        devInfo.setSdkVersion(ProductUrlConfig.SDKVERSION);
         devInfo.setSSID(NetworkUtil.getWifiSsid(context));
         devInfo.setSignalStrength(NetworkUtil.getRssi(context)+"dBm");
         devInfo.setUuid(UUIDGenerator.getUUID(context));
@@ -24,7 +26,7 @@ public class BusinessInfoBuilder {
         devInfo.setAppVersion(TelephonyUtil.getAppVersion(context));
         devInfo.setModel(TelephonyUtil.getTelephonyModel());
         devInfo.setBrand(TelephonyUtil.getManufacturer());
-        devInfo.setNetworkType(NetworkUtil.getNetworkType(context));
+        devInfo.setNetworkType(getPackketType(context)+"");
         devInfo.setCpu(TelephonyUtil.getCpuType());
         devInfo.setOsVersion(TelephonyUtil.getTelephonyVersion());
         devInfo.setMac(TelephonyUtil.getLocalMacAddress());
@@ -44,6 +46,8 @@ public class BusinessInfoBuilder {
         initReq.setPartnerCode(StorageManage.getInstance().getPartner_code());
         initReq.setUserAccount(StorageManage.getInstance().getUser_account());
         initReq.setDevInfo(builderDevInfoReq(StorageManage.getInstance().getmContext()));
+        initReq.setAppid(StorageManage.getInstance().getAppid());
+        initReq.setSdkId("100093");
         return initReq;
     }
 
@@ -79,7 +83,7 @@ public class BusinessInfoBuilder {
     public static OrderQuerySvc getOrderQuerySvc(){
         OrderQuerySvc orderQuerySvc = new OrderQuerySvc();
 
-        orderQuerySvc.setClassName(StorageManage.getInstance().getClassName());
+        //orderQuerySvc.setClassName(StorageManage.getInstance().getClassName());
         orderQuerySvc.setPartner_code(StorageManage.getInstance().getPartner_code());
         orderQuerySvc.setTimestamp(getTimeMillis());
 
@@ -89,7 +93,7 @@ public class BusinessInfoBuilder {
     public static StartupAclrSvc getStartupAclrSvc(){
         StartupAclrSvc startupAclrSvc = new StartupAclrSvc();
 
-        startupAclrSvc.setClassName(StorageManage.getInstance().getClassName());
+        //startupAclrSvc.setClassName(StorageManage.getInstance().getClassName());
         startupAclrSvc.setIp(StorageManage.getInstance().getIP());
         startupAclrSvc.setPartner_code(StorageManage.getInstance().getPartner_code());
         startupAclrSvc.setUser_account(StorageManage.getInstance().getUser_account());
@@ -101,7 +105,7 @@ public class BusinessInfoBuilder {
     public static StopAclrSvc getStopAclrSvc(){
         StopAclrSvc stopAclrSvc = new StopAclrSvc();
 
-        stopAclrSvc.setClassName(StorageManage.getInstance().getClassName());
+        //stopAclrSvc.setClassName(StorageManage.getInstance().getClassName());
         stopAclrSvc.setIp(StorageManage.getInstance().getIP());
         stopAclrSvc.setPartner_code(StorageManage.getInstance().getPartner_code());
         stopAclrSvc.setTimestamp(getTimeMillis());
@@ -112,7 +116,7 @@ public class BusinessInfoBuilder {
     public static StateQuerySvc getStateQuerySvc(){
         StateQuerySvc stateQuerySvc = new StateQuerySvc();
 
-        stateQuerySvc.setClassName(StorageManage.getInstance().getClassName());
+        //stateQuerySvc.setClassName(StorageManage.getInstance().getClassName());
         stateQuerySvc.setIp(StorageManage.getInstance().getIP());
         stateQuerySvc.setPartner_code(StorageManage.getInstance().getPartner_code());
         stateQuerySvc.setTimestamp(getTimeMillis());
@@ -124,13 +128,16 @@ public class BusinessInfoBuilder {
         return System.currentTimeMillis() +"";
     }
     public static int getPackketType(Context context){
+        // 1 WiFi, 2 4G, 3 3G, 4 2G
         String net = NetworkUtil.getNetworkType(context);
-        if ("4G".equals(net)){
+        if ("WiFi".equals(net)){
             return 1;
-        }else if ("WIFI".equals(net)){
+        }else if ("4G".equals(net)){
             return 2;
+        }else if("3G".equals(net)){
+            return 3;
         }else {
-            return 0;
+            return 4;
         }
     }
 }
